@@ -813,28 +813,35 @@ h3::before {
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
   position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-secondary);
 }
 
 .table-container::before {
   content: '';
-  position: absolute;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
   opacity: 0.5;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .luxury-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.9rem;
 }
 
 .luxury-table thead {
   background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-surface) 100%);
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .luxury-table th {
@@ -847,6 +854,7 @@ h3::before {
   font-size: 0.8rem;
   border-bottom: 2px solid var(--color-accent);
   position: relative;
+  white-space: nowrap;
 }
 
 .luxury-table th::after {
@@ -862,13 +870,12 @@ h3::before {
 
 .luxury-table tbody tr {
   border-bottom: 1px solid var(--color-border-light);
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast);
   position: relative;
 }
 
 .luxury-table tbody tr:hover {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(201, 162, 39, 0.04) 100%);
-  transform: scale(1.01);
 }
 
 .luxury-table tbody tr:last-child {
