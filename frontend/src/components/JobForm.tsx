@@ -3,10 +3,11 @@ import { useJobStore } from '../store/useJobStore';
 
 export const JobForm: React.FC = () => {
   const [text, setText] = useState('');
-  const { createJob, loading } = useJobStore();
+  const { createJob, loading, error, clearError } = useJobStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearError();
     const urls = text.split('\n').map(u => u.trim()).filter(u => u.length > 0);
     if (urls.length === 0) return alert('Введите хотя бы один URL');
     try {
@@ -14,13 +15,17 @@ export const JobForm: React.FC = () => {
       setText('');
     } catch (error) {
       console.error(error);
-      alert('Ошибка при создании задания');
     }
   };
 
   return (
     <div className="card job-form">
       <h3>Создать новое задание</h3>
+      {error && (
+        <div className="error-message" style={{ color: 'var(--color-error)', marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'rgba(220, 38, 38, 0.1)', borderRadius: '4px' }}>
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label" htmlFor="urls-input">

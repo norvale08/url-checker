@@ -1,24 +1,31 @@
 import { create } from 'zustand';
 import { api } from '../api';
 
+type JobStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'failed';
+type UrlStatus = 'pending' | 'in_progress' | 'success' | 'error' | 'cancelled';
+
 interface JobSummary {
   id: string;
   createdAt: string;
-  status: string;
+  status: JobStatus;
   totalUrls: number;
   stats: { success: number; error: number };
 }
 
 interface JobDetails {
   id: string;
-  status: string;
+  status: JobStatus;
+  createdAt: string;
   urls: Array<{
     url: string;
-    status: string;
+    status: UrlStatus;
     httpStatus?: number;
     error?: string;
+    startTime?: string;
+    endTime?: string;
     duration?: number;
   }>;
+  processedCount: number;
 }
 
 interface JobState {
@@ -26,6 +33,7 @@ interface JobState {
   activeJob: JobDetails | null;
   pollingIntervalId: number | null;
   loading: boolean;
+  error: string | null;
 
   fetchJobs: () => Promise<void>;
   selectActiveJob: (id: string) => void;
@@ -33,6 +41,7 @@ interface JobState {
   stopPolling: () => void;
   createJob: (urls: string[]) => Promise<void>;
   cancelActiveJob: () => Promise<void>;
+  clearError: () => void;
 }
 
 export const useJobStore = create<JobState>((set, get) => ({
@@ -40,12 +49,15 @@ export const useJobStore = create<JobState>((set, get) => ({
   activeJob: null,
   pollingIntervalId: null,
   loading: false,
+  error: null,
 
   fetchJobs: async () => {
     try {
       const data = await api.getJobs();
-      set({ jobs: data });
+      set({ jobs: data, error: null });
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch jobs';
+      set({ error: errorMessage });
       console.error(err);
     }
   },
@@ -54,11 +66,13 @@ export const useJobStore = create<JobState>((set, get) => ({
     get().stopPolling();
     try {
       const details = await api.getJobDetails(id);
-      set({ activeJob: details });
+      set({ activeJob: details, error: null });
       if (['pending', 'in_progress'].includes(details.status)) {
         get().startPolling(id);
       }
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch job details';
+      set({ error: errorMessage });
       console.error(err);
     }
   },
@@ -68,13 +82,15 @@ export const useJobStore = create<JobState>((set, get) => ({
       try {
         const details = await api.getJobDetails(id);
         if (get().activeJob?.id === id) {
-          set({ activeJob: details });
+          set({ activeJob: details, error: null });
           get().fetchJobs();
           if (!['pending', 'in_progress'].includes(details.status)) {
             get().stopPolling();
           }
         }
       } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to poll job details';
+        set({ error: errorMessage });
         console.error(err);
         get().stopPolling();
       }
@@ -91,12 +107,14 @@ export const useJobStore = create<JobState>((set, get) => ({
   },
 
   createJob: async (urls: string[]) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const { jobId } = await api.createJob(urls);
       await get().fetchJobs();
       await get().selectActiveJob(jobId);
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create job';
+      set({ error: errorMessage });
       console.error(err);
       throw err;
     } finally {
@@ -111,7 +129,13 @@ export const useJobStore = create<JobState>((set, get) => ({
       await api.cancelJob(activeJob.id);
       await get().selectActiveJob(activeJob.id);
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to cancel job';
+      set({ error: errorMessage });
       console.error(err);
     }
+  },
+
+  clearError: () => {
+    set({ error: null });
   }
 }));

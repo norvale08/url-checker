@@ -29,7 +29,8 @@ export async function processJob(jobId: string) {
       if (index >= pool.length) {
         if (activeWorkers === 0) {
           const hasErrors = currentJob.urls.some(u => u.status === 'error');
-          currentJob.status = hasErrors && currentJob.urls.every(u => u.status === 'error') ? 'failed' : 'completed';
+          const hasSuccess = currentJob.urls.some(u => u.status === 'success');
+          currentJob.status = hasErrors && !hasSuccess ? 'failed' : 'completed';
           storage.saveJob(currentJob);
           resolve();
         }
@@ -65,6 +66,10 @@ async function processUrl(jobId: string, urlTarget: UrlResult) {
   const jobAfterDelay = storage.getJob(jobId);
   if (!jobAfterDelay || jobAfterDelay.status === 'cancelled') {
     urlTarget.status = 'cancelled';
+    const jobToSave = storage.getJob(jobId);
+    if (jobToSave) {
+      storage.saveJob(jobToSave);
+    }
     return;
   }
 
