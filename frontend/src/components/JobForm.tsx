@@ -14,19 +14,28 @@ export const JobForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
+    <div className="card job-form">
       <h3>Создать новое задание</h3>
-      <textarea
-        rows={6}
-        style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-        placeholder="https://example.com&#10;https://google.com"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        disabled={loading}
-      />
-      <button type="submit" style={{ marginTop: '10px', padding: '10px 20px' }} disabled={loading}>
-        {loading ? 'Запуск...' : 'Запустить проверку'}
-      </button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label" htmlFor="urls-input">
+            Список URL-адресов
+          </label>
+          <textarea
+            id="urls-input"
+            rows={6}
+            className="form-textarea"
+            placeholder="https://example.com&#10;https://google.com&#10;https://github.com"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary" disabled={loading}>
+          {loading && <span className="loading-spinner"></span>}
+          {loading ? 'Запуск проверки...' : 'Запустить проверку'}
+        </button>
+      </form>
+    </div>
   );
 };

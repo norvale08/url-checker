@@ -2,13 +2,34 @@ import React from 'react';
 import { JobForm } from './components/JobForm';
 import { JobList } from './components/JobList';
 import { JobDetails } from './components/JobDetails';
+import './styles/luxury.css';
 
 const App: React.FC = () => {
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Асинхронный сканер URL</h1>
-      <hr />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+    <div className="app-container">
+      <header className="app-header">
+        {/* Decorative ornament above title */}
+        <div className="header-ornament">
+          <span className="header-ornament-line" />
+          <span className="header-ornament-diamond">◆</span>
+          <span className="header-ornament-line header-ornament-line--right" />
+        </div>
+
+        <h1>Асинхронный сканер URL</h1>
+
+        <p className="app-subtitle">Элегантная платформа для мониторинга веб-ресурсов</p>
+
+        {/* Tagline badges */}
+        <div className="header-tagline">
+          <span>Мониторинг</span>
+          <span className="header-tagline-dot" />
+          <span>Аналитика</span>
+          <span className="header-tagline-dot" />
+          <span>Надёжность</span>
+        </div>
+      </header>
+
+      <div className="app-grid">
         <div>
           <JobForm />
           <JobList />
