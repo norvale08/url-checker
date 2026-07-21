@@ -16,11 +16,14 @@ export const JobDetails: React.FC = () => {
     );
   }
 
-  const processedCount = activeJob.urls.filter(u =>
+  const urls = activeJob.urls || [];
+  const processedCount = urls.filter(u =>
     ['success', 'error', 'cancelled'].includes(u.status)
   ).length;
-  const progressPct = activeJob.urls.length > 0
-    ? Math.round((processedCount / activeJob.urls.length) * 100)
+  const successCount = urls.filter(u => u.status === 'success').length;
+  const errorCount = urls.filter(u => u.status === 'error').length;
+  const progressPct = urls.length > 0
+    ? Math.round((processedCount / urls.length) * 100)
     : 0;
   const isProgressing = ['pending', 'in_progress'].includes(activeJob.status);
 
@@ -72,18 +75,18 @@ export const JobDetails: React.FC = () => {
           </span>
           <span>
             <span className="stat-label">Всего: </span>
-            <span className="stat-value">{activeJob.urls.length}</span>
+            <span className="stat-value">{urls.length}</span>
           </span>
           <span>
             <span className="stat-label">Успешно: </span>
             <span className="stat-value" style={{ color: 'var(--color-success)' }}>
-              {activeJob.stats.success}
+              {successCount}
             </span>
           </span>
           <span>
             <span className="stat-label">Ошибок: </span>
             <span className="stat-value" style={{ color: 'var(--color-error)' }}>
-              {activeJob.stats.error}
+              {errorCount}
             </span>
           </span>
         </div>
@@ -101,7 +104,7 @@ export const JobDetails: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {activeJob.urls.map((u, i) => (
+            {urls.map((u, i) => (
               <tr key={i} className="url-result-row">
                 <td className="url-cell">{u.url}</td>
                 <td>

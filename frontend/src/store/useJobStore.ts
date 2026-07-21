@@ -93,11 +93,16 @@ export const useJobStore = create<JobState>((set, get) => ({
   createJob: async (urls: string[]) => {
     set({ loading: true });
     try {
+      console.log('Creating job with URLs:', urls);
       const { jobId } = await api.createJob(urls);
+      console.log('Job created with ID:', jobId);
       await get().fetchJobs();
+      console.log('Jobs fetched');
       await get().selectActiveJob(jobId);
+      console.log('Active job selected');
     } catch (err) {
-      console.error(err);
+      console.error('Error in createJob:', err);
+      throw err;
     } finally {
       set({ loading: false });
     }

@@ -5,12 +5,17 @@ export const JobForm: React.FC = () => {
   const [text, setText] = useState('');
   const { createJob, loading } = useJobStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const urls = text.split('\n').map(u => u.trim()).filter(u => u.length > 0);
     if (urls.length === 0) return alert('Введите хотя бы один URL');
-    createJob(urls);
-    setText('');
+    try {
+      await createJob(urls);
+      setText('');
+    } catch (error) {
+      console.error('Error creating job:', error);
+      alert('Ошибка при создании задания');
+    }
   };
 
   return (
