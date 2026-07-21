@@ -27,11 +27,9 @@ export async function processJob(jobId: string) {
 
       if (index >= pool.length) {
         if (activeWorkers === 0) {
-          if (currentJob.status !== 'cancelled') {
-            const hasErrors = currentJob.urls.some(u => u.status === 'error');
-            currentJob.status = hasErrors && currentJob.urls.every(u => u.status === 'error') ? 'failed' : 'completed';
-            storage.saveJob(currentJob);
-          }
+          const hasErrors = currentJob.urls.some(u => u.status === 'error');
+          currentJob.status = hasErrors && currentJob.urls.every(u => u.status === 'error') ? 'failed' : 'completed';
+          storage.saveJob(currentJob);
           resolve();
         }
         return;
