@@ -7,10 +7,7 @@ export const JobDetails: React.FC = () => {
   if (!activeJob) {
     return (
       <div className="card empty-state">
-        <div className="empty-state-icon">◈</div>
-        <h3 style={{ textTransform: 'none', letterSpacing: '0.5px', fontSize: '1rem' }}>
-          Задание не выбрано
-        </h3>
+        <h3>Задание не выбрано</h3>
         <p>Выберите задание из списка для просмотра деталей</p>
       </div>
     );
@@ -27,25 +24,34 @@ export const JobDetails: React.FC = () => {
     : 0;
   const isProgressing = ['pending', 'in_progress'].includes(activeJob.status);
 
-  const statusLabel: Record<string, string> = {
-    pending: 'Ожидание',
-    in_progress: 'В процессе',
-    completed: 'Завершено',
-    cancelled: 'Отменено',
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return 'Ожидание';
+      case 'in_progress': return 'В процессе';
+      case 'completed': return 'Завершено';
+      case 'cancelled': return 'Отменено';
+      default: return status;
+    }
+  };
+
+  const getUrlStatusLabel = (status: string) => {
+    switch (status) {
+      case 'success': return 'Успех';
+      case 'error': return 'Ошибка';
+      case 'cancelled': return 'Отменено';
+      default: return 'Ожидание';
+    }
   };
 
   return (
     <div className="card">
-      {/* Header */}
       <div className="job-details-header">
         <div>
-          <h2 style={{ marginBottom: '0.25rem' }}>Детали задания</h2>
+          <h2>Детали задания</h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span className="job-id" style={{ fontSize: '0.9rem' }}>
-              #{activeJob.id.substring(0, 8).toUpperCase()}
-            </span>
+            <span className="job-id">#{activeJob.id.substring(0, 8).toUpperCase()}</span>
             <span className={`job-status ${activeJob.status.replace('_', '-')}`}>
-              {statusLabel[activeJob.status] ?? activeJob.status}
+              {getStatusLabel(activeJob.status)}
             </span>
           </div>
         </div>
@@ -56,7 +62,6 @@ export const JobDetails: React.FC = () => {
         )}
       </div>
 
-      {/* Progress Bar */}
       <div className="progress-bar-container">
         <div className="progress-bar-label">
           <span>Прогресс проверки</span>
@@ -92,7 +97,6 @@ export const JobDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* URL Results Table */}
       <div className="table-container">
         <table className="luxury-table">
           <thead>
@@ -109,10 +113,7 @@ export const JobDetails: React.FC = () => {
                 <td className="url-cell">{u.url}</td>
                 <td>
                   <span className={`status-badge ${u.status === 'success' ? 'success' : u.status === 'error' ? 'error' : u.status === 'cancelled' ? 'cancelled' : 'pending'}`}>
-                    {u.status === 'success' ? 'Успех'
-                      : u.status === 'error' ? 'Ошибка'
-                      : u.status === 'cancelled' ? 'Отменено'
-                      : 'Ожидание'}
+                    {getUrlStatusLabel(u.status)}
                   </span>
                 </td>
                 <td className="http-cell">

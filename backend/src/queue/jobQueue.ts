@@ -4,6 +4,7 @@ import { UrlResult, Job } from '../types';
 
 const CONCURRENCY_LIMIT = 5;
 
+// Random delay 0-10 seconds as per requirements
 const delay = () => new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
 
 export async function processJob(jobId: string) {
@@ -39,7 +40,7 @@ export async function processJob(jobId: string) {
       activeWorkers++;
 
       await processUrl(jobId, urlTarget);
-      
+
       activeWorkers--;
       spawnWorker();
     }
@@ -69,11 +70,11 @@ async function processUrl(jobId: string, urlTarget: UrlResult) {
 
   try {
     const start = Date.now();
-    const response = await axios.head(urlTarget.url, { 
+    const response = await axios.head(urlTarget.url, {
       timeout: 5000,
-      validateStatus: () => true 
+      validateStatus: () => true
     });
-    
+
     urlTarget.status = 'success';
     urlTarget.httpStatus = response.status;
     urlTarget.duration = Date.now() - start;

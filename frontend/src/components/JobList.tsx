@@ -8,6 +8,16 @@ export const JobList: React.FC = () => {
     fetchJobs();
   }, []);
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'in_progress': return 'В процессе';
+      case 'pending': return 'Ожидание';
+      case 'completed': return 'Завершено';
+      case 'cancelled': return 'Отменено';
+      default: return status;
+    }
+  };
+
   return (
     <div className="card" style={{ marginTop: '2rem' }}>
       <h3>Список заданий</h3>
@@ -18,24 +28,21 @@ export const JobList: React.FC = () => {
           </div>
         )}
         {jobs.map(job => (
-          <div 
-            key={job.id} 
+          <div
+            key={job.id}
             onClick={() => selectActiveJob(job.id)}
             className={`job-item ${activeJob?.id === job.id ? 'active' : ''}`}
           >
             <div className="job-item-header">
               <span className="job-id">#{job.id.substring(0, 8).toUpperCase()}</span>
               <span className={`job-status ${job.status.replace('_', '-')}`}>
-                {job.status === 'in_progress' ? 'В процессе' : 
-                 job.status === 'pending' ? 'Ожидание' :
-                 job.status === 'completed' ? 'Завершено' : 
-                 job.status === 'cancelled' ? 'Отменено' : job.status}
+                {getStatusLabel(job.status)}
               </span>
             </div>
             <div className="job-item-meta">
-              {new Date(job.createdAt).toLocaleString('ru-RU', { 
-                dateStyle: 'medium', 
-                timeStyle: 'short' 
+              {new Date(job.createdAt).toLocaleString('ru-RU', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
               })}
             </div>
             <div className="job-item-stats">

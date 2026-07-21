@@ -8,7 +8,7 @@ export interface UrlResult {
   error?: string;
   startTime?: Date;
   endTime?: Date;
-  duration?: number; // в мс
+  duration?: number;
 }
 
 export interface Job {

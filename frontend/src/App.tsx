@@ -8,25 +8,8 @@ const App: React.FC = () => {
   return (
     <div className="app-container">
       <header className="app-header">
-        {/* Decorative ornament above title */}
-        <div className="header-ornament">
-          <span className="header-ornament-line" />
-          <span className="header-ornament-diamond">◆</span>
-          <span className="header-ornament-line header-ornament-line--right" />
-        </div>
-
         <h1>Асинхронный сканер URL</h1>
-
-        <p className="app-subtitle">Элегантная платформа для мониторинга веб-ресурсов</p>
-
-        {/* Tagline badges */}
-        <div className="header-tagline">
-          <span>Мониторинг</span>
-          <span className="header-tagline-dot" />
-          <span>Аналитика</span>
-          <span className="header-tagline-dot" />
-          <span>Надёжность</span>
-        </div>
+        <p className="app-subtitle">Проверка доступности веб-ресурсов</p>
       </header>
 
       <div className="app-grid">

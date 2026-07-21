@@ -13,7 +13,7 @@ export const JobForm: React.FC = () => {
       await createJob(urls);
       setText('');
     } catch (error) {
-      console.error('Error creating job:', error);
+      console.error(error);
       alert('Ошибка при создании задания');
     }
   };

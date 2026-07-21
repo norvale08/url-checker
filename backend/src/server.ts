@@ -9,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Create new job
 app.post('/api/jobs', (req, res) => {
   const { urls } = req.body;
   if (!urls || !Array.isArray(urls) || urls.length === 0) {
@@ -35,12 +36,13 @@ app.post('/api/jobs', (req, res) => {
   res.status(201).json({ jobId });
 });
 
+// Get all jobs (summary)
 app.get('/api/jobs', (req, res) => {
   const jobs = storage.getAllJobs();
   const summary = jobs.map(job => {
     const successCount = job.urls.filter(u => u.status === 'success').length;
     const errorCount = job.urls.filter(u => u.status === 'error').length;
-    
+
     return {
       id: job.id,
       createdAt: job.createdAt,
@@ -52,12 +54,14 @@ app.get('/api/jobs', (req, res) => {
   res.json(summary);
 });
 
+// Get job details
 app.get('/api/jobs/:id', (req, res) => {
   const job = storage.getJob(req.params.id);
   if (!job) return res.status(404).json({ error: 'Job not found' });
   res.json(job);
 });
 
+// Cancel job
 app.delete('/api/jobs/:id', (req, res) => {
   const job = storage.getJob(req.params.id);
   if (!job) return res.status(404).json({ error: 'Job not found' });
@@ -75,4 +79,4 @@ app.delete('/api/jobs/:id', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Backend is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

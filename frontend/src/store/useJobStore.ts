@@ -26,7 +26,7 @@ interface JobState {
   activeJob: JobDetails | null;
   pollingIntervalId: number | null;
   loading: boolean;
-  
+
   fetchJobs: () => Promise<void>;
   selectActiveJob: (id: string) => void;
   startPolling: (id: string) => void;
@@ -46,7 +46,7 @@ export const useJobStore = create<JobState>((set, get) => ({
       const data = await api.getJobs();
       set({ jobs: data });
     } catch (err) {
-      console.error('Failed to fetch jobs', err);
+      console.error(err);
     }
   },
 
@@ -75,7 +75,7 @@ export const useJobStore = create<JobState>((set, get) => ({
           }
         }
       } catch (err) {
-        console.error('Polling error', err);
+        console.error(err);
         get().stopPolling();
       }
     }, 2000);
@@ -93,15 +93,11 @@ export const useJobStore = create<JobState>((set, get) => ({
   createJob: async (urls: string[]) => {
     set({ loading: true });
     try {
-      console.log('Creating job with URLs:', urls);
       const { jobId } = await api.createJob(urls);
-      console.log('Job created with ID:', jobId);
       await get().fetchJobs();
-      console.log('Jobs fetched');
       await get().selectActiveJob(jobId);
-      console.log('Active job selected');
     } catch (err) {
-      console.error('Error in createJob:', err);
+      console.error(err);
       throw err;
     } finally {
       set({ loading: false });
